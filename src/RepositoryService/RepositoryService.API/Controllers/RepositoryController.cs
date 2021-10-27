@@ -25,15 +25,15 @@ namespace RepositoryService.API.Controllers
         {
             AddRecordCommand arc = new AddRecordCommand()
             {
-                Company = "Akbank",
-                Name = "Orkun",
-                Surname = "Uysal",
+                Company = "Microsoft",
+                Name = "John",
+                Surname = "Doe",
                 ContactInfos = new List<Core.Entities.ContactInfo>()
                 {
                     new Core.Entities.ContactInfo()
                     {
                         Type = (int)ContactInfoType.Email,
-                        Value = "orkunuysal@gmail.com"
+                        Value = "johndoe@microsoft.com"
                     }
                 }
             };
