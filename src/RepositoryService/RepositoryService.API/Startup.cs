@@ -7,7 +7,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using RepositoryService.API.Middlewares.RequestResponse;
 using RepositoryService.Core.Models;
+using RepositoryService.Infrastructure;
 using RepositoryService.Infrastructure.Data;
 using RepositoryService.Infrastructure.Data.Interfaces;
 using RepositoryService.Infrastructure.Services;
@@ -55,10 +57,11 @@ namespace RepositoryService.API
 
             services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true));
 
-            services.AddScoped<ICacheContext, CacheContext>();
-            services.AddScoped<ICacheService, RedisCacheService>();
-
             services.AddMvc();
+
+            // Adding services we created via Infrastructure project's ServiceRegistration.cs
+            services.AddInfrastructure();
+            services.AddHttpContextAccessor();
             services.AddDbContext<PhonebookContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("Postgres")));
 
             services.AddControllers();
@@ -83,6 +86,8 @@ namespace RepositoryService.API
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "RepositoryService.API v1"));
             }
+
+            app.UseRequestResponseLogging();
 
             app.UseRouting();
 
