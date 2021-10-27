@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using RepositoryService.Infrastructure.Data.Interfaces;
 using RepositoryService.Infrastructure.Services.Interfaces;
+using System;
 using System.Threading.Tasks;
 
 namespace RepositoryService.Infrastructure.Services
@@ -18,6 +19,12 @@ namespace RepositoryService.Infrastructure.Services
         {
             string jsonData = JsonConvert.SerializeObject(data);
             await _context.Redis.StringSetAsync(key, jsonData);
+        }
+
+        public async Task AddWithExpire(string key, object data, int second)
+        {
+            string jsonData = JsonConvert.SerializeObject(data);
+            await _context.Redis.StringSetAsync(key, jsonData, new TimeSpan(0, 0, second));
         }
 
         public async Task<bool> Any(string key)
