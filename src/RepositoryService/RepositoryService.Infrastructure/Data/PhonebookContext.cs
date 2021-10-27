@@ -16,5 +16,14 @@ namespace RepositoryService.Infrastructure.Data
         }
 
         public DbSet<Record> Records { get; set; }
+        public DbSet<ContactInfo> ContactInfos { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<ContactInfo>()
+                .HasOne(p => p.Record)
+                .WithMany(b => b.ContactInfos)
+                .HasForeignKey(p => p.RecordForeignKey);
+        }
     }
 }

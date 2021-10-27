@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 
 namespace RepositoryService.Core.Entities
 {
-    public class Record
+    public class ContactInfo
     {
         [Key]
         public string UUID { get; set; } = Guid.NewGuid().ToString();
 
-        public string Name { get; set; }
-        public string Surname { get; set; }
-        public string Company { get; set; }
+        public int Type { get; set; }
+        public string Value { get; set; }
 
-        public List<ContactInfo> ContactInfos { get; set; }
+        public string RecordForeignKey { get; set; }
+        public Record Record { get; set; }
     }
 }
