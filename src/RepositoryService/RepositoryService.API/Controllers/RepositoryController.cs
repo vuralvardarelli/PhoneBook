@@ -6,6 +6,7 @@ using RepositoryService.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace RepositoryService.API.Controllers
@@ -20,30 +21,18 @@ namespace RepositoryService.API.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet]
-        public async Task<ActionResult> Test()
+        [HttpPost("AddRecord")]
+        [ProducesResponseType(typeof(RecordResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+        //[ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<ActionResult> AddRecord([FromBody] AddRecordCommand request)
         {
-            AddRecordCommand arc = new AddRecordCommand()
-            {
-                Company = "Microsoft",
-                Name = "John",
-                Surname = "Doe",
-                ContactInfos = new List<Core.Entities.ContactInfo>()
-                {
-                    new Core.Entities.ContactInfo()
-                    {
-                        Type = (int)ContactInfoType.Email,
-                        Value = "johndoe@microsoft.com"
-                    }
-                }
-            };
+            RecordResponse response = await _mediator.Send(request);
 
-            RecordResponse resp = await _mediator.Send(arc);
-
-            if (resp == null)
+            if (response == null)
                 return StatusCode(500, "Check Elasticsearch logs for more information");
 
-            return Ok(resp);
+            return Ok(response);
         }
     }
 }
