@@ -12,6 +12,7 @@ namespace RepositoryService.Infrastructure
         {
             services.AddScoped<ICacheContext, CacheContext>();
             services.AddScoped<ICacheService, RedisCacheService>();
+            services.AddScoped<IPhoneBookService, PhoneBookService>();
         }
     }
 }

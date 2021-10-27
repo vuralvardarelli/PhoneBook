@@ -8,33 +8,48 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
+using RepositoryService.Infrastructure.Services.Interfaces;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Http;
+using RepositoryService.Core;
 
 namespace RepositoryService.Application.Handlers
 {
     public class AddRecordHandler : IRequestHandler<AddRecordCommand, RecordResponse>
     {
         private readonly PhonebookContext _context;
-        private static object _lock = new object();
+        private readonly IPhoneBookService _phoneBookService;
+        private readonly ILogger<AddRecordHandler> _logger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AddRecordHandler(PhonebookContext context)
+        public AddRecordHandler(PhonebookContext context, IPhoneBookService phoneBookService, ILogger<AddRecordHandler> logger, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
+            _phoneBookService = phoneBookService;
+            _logger = logger;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<RecordResponse> Handle(AddRecordCommand request, CancellationToken cancellationToken)
         {
-            var recordEntity = RecordMapper.Mapper.Map<Record>(request);
-            if (recordEntity == null)
-                throw new ApplicationException($"Entity could not be mapped.");
+            RecordResponse resp = null;
 
-            Monitor.Enter(_lock);
-            _context.Add(recordEntity);
-            _context.SaveChanges();
-            Record record = _context.Records.OrderByDescending(x => x.RecordId).FirstOrDefault();
-            Monitor.Exit(_lock);
+            try
+            {
+                Record recordEntity = RecordMapper.Mapper.Map<Record>(request);
+                if (recordEntity == null)
+                    throw new ApplicationException($"Entity could not be mapped.");
 
-            var recordResponse = RecordMapper.Mapper.Map<RecordResponse>(record);
-            return recordResponse;
+                recordEntity = _phoneBookService.AddRecord(recordEntity);
+
+                resp = RecordMapper.Mapper.Map<RecordResponse>(recordEntity);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(Constants.ErrorLoggingTemplate, ex.GetType().Name, ex.Message, ex.StackTrace, "AddRecordHandler", "Handle", _httpContextAccessor.HttpContext.TraceIdentifier);
+            }
+
+            return resp;
         }
     }
 }
