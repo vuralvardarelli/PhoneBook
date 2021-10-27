@@ -11,29 +11,29 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RepositoryService", "Reposi
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ReportService", "ReportService", "{3D3295A0-C866-476E-B11C-D362EF630708}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhoneBook.API", "src\PhoneBook\PhoneBook.API\PhoneBook.API.csproj", "{42D8BB6D-65D1-4C00-BA44-D7872569032D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PhoneBook.API", "src\PhoneBook\PhoneBook.API\PhoneBook.API.csproj", "{42D8BB6D-65D1-4C00-BA44-D7872569032D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhoneBook.Core", "src\PhoneBook\PhoneBook.Core\PhoneBook.Core.csproj", "{DDFFAECA-D7D3-46BD-9DBC-041CDBE898A9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PhoneBook.Core", "src\PhoneBook\PhoneBook.Core\PhoneBook.Core.csproj", "{DDFFAECA-D7D3-46BD-9DBC-041CDBE898A9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhoneBook.Infrastructure", "src\PhoneBook\PhoneBook.Infrastructure\PhoneBook.Infrastructure.csproj", "{226C7F6D-07AA-4888-B2DD-BC49CBC2D18A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PhoneBook.Infrastructure", "src\PhoneBook\PhoneBook.Infrastructure\PhoneBook.Infrastructure.csproj", "{226C7F6D-07AA-4888-B2DD-BC49CBC2D18A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReportService.API", "src\ReportService\ReportService.API\ReportService.API.csproj", "{F8F90ECC-D4B0-4707-A07E-59E6DC248A12}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReportService.API", "src\ReportService\ReportService.API\ReportService.API.csproj", "{F8F90ECC-D4B0-4707-A07E-59E6DC248A12}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReportService.Core", "src\ReportService\ReportService.Core\ReportService.Core.csproj", "{4B0B716C-F59B-4F76-9781-DCAF9EB392DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReportService.Core", "src\ReportService\ReportService.Core\ReportService.Core.csproj", "{4B0B716C-F59B-4F76-9781-DCAF9EB392DB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReportService.Infrastructure", "src\ReportService\ReportService.Infrastructure\ReportService.Infrastructure.csproj", "{BD22AB4B-7C56-488A-8E45-DE6CE68DEB3A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReportService.Infrastructure", "src\ReportService\ReportService.Infrastructure\ReportService.Infrastructure.csproj", "{BD22AB4B-7C56-488A-8E45-DE6CE68DEB3A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RepositoryService.API", "src\RepositoryService\RepositoryService.API\RepositoryService.API.csproj", "{EF2AB1F8-6A78-4148-9E89-32845DE92916}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RepositoryService.API", "src\RepositoryService\RepositoryService.API\RepositoryService.API.csproj", "{EF2AB1F8-6A78-4148-9E89-32845DE92916}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RepositoryService.Application", "src\RepositoryService\RepositoryService.Application\RepositoryService.Application.csproj", "{C028FADD-3500-41CF-89C3-39EB809CEAFA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RepositoryService.Application", "src\RepositoryService\RepositoryService.Application\RepositoryService.Application.csproj", "{C028FADD-3500-41CF-89C3-39EB809CEAFA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RepositoryService.Core", "src\RepositoryService\RepositoryService.Core\RepositoryService.Core.csproj", "{D60DC006-212C-49DA-82BD-85AA0D68F244}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RepositoryService.Core", "src\RepositoryService\RepositoryService.Core\RepositoryService.Core.csproj", "{D60DC006-212C-49DA-82BD-85AA0D68F244}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RepositoryService.Infrastructure", "src\RepositoryService\RepositoryService.Infrastructure\RepositoryService.Infrastructure.csproj", "{5DD8259A-532F-4974-B4FE-DA53E233B92E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RepositoryService.Infrastructure", "src\RepositoryService\RepositoryService.Infrastructure\RepositoryService.Infrastructure.csproj", "{5DD8259A-532F-4974-B4FE-DA53E233B92E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{8729B50A-9C90-4987-9F8C-31F5A40EE118}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventBusRabbitMQ", "src\Common\EventBusRabbitMQ\EventBusRabbitMQ.csproj", "{C85C53D7-50B6-4B1E-81A9-E00DE5D4C079}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBusRabbitMQ", "src\Common\EventBusRabbitMQ\EventBusRabbitMQ.csproj", "{C85C53D7-50B6-4B1E-81A9-E00DE5D4C079}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

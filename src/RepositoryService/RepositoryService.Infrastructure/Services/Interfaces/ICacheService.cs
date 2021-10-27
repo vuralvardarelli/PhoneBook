@@ -1,0 +1,12 @@
+﻿using System.Threading.Tasks;
+
+namespace RepositoryService.Infrastructure.Services.Interfaces
+{
+    public interface ICacheService
+    {
+        Task<T> Get<T>(string key);
+        Task Add(string key, object data);
+        Task Remove(string key);
+        Task<bool> Any(string key);
+    }
+}
