@@ -23,7 +23,7 @@ namespace RepositoryService.Infrastructure.Data
             modelBuilder.Entity<ContactInfo>()
                 .HasOne(p => p.Record)
                 .WithMany(b => b.ContactInfos)
-                .HasForeignKey(p => p.RecordForeignKey);
+                .HasForeignKey(p => p.RecordRefId);
         }
     }
 }

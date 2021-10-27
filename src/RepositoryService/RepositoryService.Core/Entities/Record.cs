@@ -10,12 +10,12 @@ namespace RepositoryService.Core.Entities
     public class Record
     {
         [Key]
-        public string UUID { get; set; } = Guid.NewGuid().ToString();
+        public int RecordId { get; set; }
 
         public string Name { get; set; }
         public string Surname { get; set; }
         public string Company { get; set; }
 
-        public List<ContactInfo> ContactInfos { get; set; }
+        public ICollection<ContactInfo> ContactInfos { get; set; }
     }
 }

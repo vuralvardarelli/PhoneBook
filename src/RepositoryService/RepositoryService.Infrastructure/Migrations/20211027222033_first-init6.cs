@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace RepositoryService.Infrastructure.Migrations
 {
-    public partial class firstinit3 : Migration
+    public partial class firstinit6 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -10,40 +11,42 @@ namespace RepositoryService.Infrastructure.Migrations
                 name: "Records",
                 columns: table => new
                 {
-                    UUID = table.Column<string>(type: "text", nullable: false),
+                    RecordId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: true),
                     Surname = table.Column<string>(type: "text", nullable: true),
                     Company = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Records", x => x.UUID);
+                    table.PrimaryKey("PK_Records", x => x.RecordId);
                 });
 
             migrationBuilder.CreateTable(
                 name: "ContactInfos",
                 columns: table => new
                 {
-                    UUID = table.Column<string>(type: "text", nullable: false),
+                    ContactInfoId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Type = table.Column<int>(type: "integer", nullable: false),
                     Value = table.Column<string>(type: "text", nullable: true),
-                    RecordForeignKey = table.Column<string>(type: "text", nullable: true)
+                    RecordRefId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ContactInfos", x => x.UUID);
+                    table.PrimaryKey("PK_ContactInfos", x => x.ContactInfoId);
                     table.ForeignKey(
-                        name: "FK_ContactInfos_Records_RecordForeignKey",
-                        column: x => x.RecordForeignKey,
+                        name: "FK_ContactInfos_Records_RecordRefId",
+                        column: x => x.RecordRefId,
                         principalTable: "Records",
-                        principalColumn: "UUID",
+                        principalColumn: "RecordId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ContactInfos_RecordForeignKey",
+                name: "IX_ContactInfos_RecordRefId",
                 table: "ContactInfos",
-                column: "RecordForeignKey");
+                column: "RecordRefId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

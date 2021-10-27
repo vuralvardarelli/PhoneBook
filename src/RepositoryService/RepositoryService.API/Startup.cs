@@ -1,3 +1,4 @@
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using RepositoryService.API.Middlewares.RequestResponse;
+using RepositoryService.Application.Handlers;
 using RepositoryService.Core.Models;
 using RepositoryService.Infrastructure;
 using RepositoryService.Infrastructure.Data;
@@ -21,6 +23,7 @@ using Serilog.Sinks.Elasticsearch;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace RepositoryService.API
@@ -51,6 +54,8 @@ namespace RepositoryService.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddControllers();
+            services.AddAutoMapper(typeof(Startup));
             AppSettings appSettings = new AppSettings();
             Configuration.GetSection("AppSettings").Bind(appSettings);
             services.AddSingleton<AppSettings>(appSettings);
@@ -63,8 +68,7 @@ namespace RepositoryService.API
             services.AddInfrastructure();
             services.AddHttpContextAccessor();
             services.AddDbContext<PhonebookContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("Postgres")));
-
-            services.AddControllers();
+            services.AddMediatR(typeof(AddRecordHandler).GetTypeInfo().Assembly);
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "RepositoryService.API", Version = "v1" });

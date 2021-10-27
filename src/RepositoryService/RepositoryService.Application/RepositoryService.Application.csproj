@@ -5,8 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Commands\" />
-    <Folder Include="Queries\" />
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
+    <PackageReference Include="MediatR" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RepositoryService.Core\RepositoryService.Core.csproj" />
+    <ProjectReference Include="..\RepositoryService.Infrastructure\RepositoryService.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
