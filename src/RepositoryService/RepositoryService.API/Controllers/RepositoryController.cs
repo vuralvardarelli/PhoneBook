@@ -39,6 +39,10 @@ namespace RepositoryService.API.Controllers
             };
 
             RecordResponse resp = await _mediator.Send(arc);
+
+            if (resp == null)
+                return StatusCode(500, "Check Elasticsearch logs for more information");
+
             return Ok(resp);
         }
     }
