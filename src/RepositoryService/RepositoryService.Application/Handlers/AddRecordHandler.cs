@@ -12,27 +12,26 @@ using RepositoryService.Infrastructure.Services.Interfaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
 using RepositoryService.Core;
+using RepositoryService.Core.Models;
 
 namespace RepositoryService.Application.Handlers
 {
-    public class AddRecordHandler : IRequestHandler<AddRecordCommand, RecordResponse>
+    public class AddRecordHandler : IRequestHandler<AddRecordCommand, GenericResult>
     {
-        private readonly PhonebookContext _context;
         private readonly IPhoneBookService _phoneBookService;
         private readonly ILogger<AddRecordHandler> _logger;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AddRecordHandler(PhonebookContext context, IPhoneBookService phoneBookService, ILogger<AddRecordHandler> logger, IHttpContextAccessor httpContextAccessor)
+        public AddRecordHandler(IPhoneBookService phoneBookService, ILogger<AddRecordHandler> logger, IHttpContextAccessor httpContextAccessor)
         {
-            _context = context;
             _phoneBookService = phoneBookService;
             _logger = logger;
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<RecordResponse> Handle(AddRecordCommand request, CancellationToken cancellationToken)
+        public async Task<GenericResult> Handle(AddRecordCommand request, CancellationToken cancellationToken)
         {
-            RecordResponse resp = null;
+            GenericResult resp = new GenericResult();
 
             try
             {
@@ -40,13 +39,16 @@ namespace RepositoryService.Application.Handlers
                 if (recordEntity == null)
                     throw new ApplicationException($"Entity could not be mapped.");
 
-                recordEntity = _phoneBookService.AddRecord(recordEntity);
+                await _phoneBookService.AddRecord(recordEntity);
 
-                resp = RecordMapper.Mapper.Map<RecordResponse>(recordEntity);
+                resp.IsSucceeded = true;
             }
             catch (Exception ex)
             {
                 _logger.LogError(Constants.ErrorLoggingTemplate, ex.GetType().Name, ex.Message, ex.StackTrace, "AddRecordHandler", "Handle", _httpContextAccessor.HttpContext.TraceIdentifier);
+                resp.StatusCode = 500;
+                resp.Message = ex.Message;
+                resp.Data = ex;
             }
 
             return resp;

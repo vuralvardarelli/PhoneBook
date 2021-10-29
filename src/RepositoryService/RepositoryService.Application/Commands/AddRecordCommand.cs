@@ -1,11 +1,12 @@
 ﻿using MediatR;
 using RepositoryService.Application.Responses;
 using RepositoryService.Core.Entities;
+using RepositoryService.Core.Models;
 using System.Collections.Generic;
 
 namespace RepositoryService.Application.Commands
 {
-    public class AddRecordCommand : IRequest<RecordResponse>
+    public class AddRecordCommand : IRequest<GenericResult>
     {
         public string Name { get; set; }
         public string Surname { get; set; }

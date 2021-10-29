@@ -1,4 +1,5 @@
 ﻿using RepositoryService.Core.Entities;
+using RepositoryService.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,6 @@ namespace RepositoryService.Infrastructure.Services.Interfaces
 {
     public interface IPhoneBookService
     {
-        Record AddRecord(Record record);
+        Task AddRecord(Record record);
     }
 }

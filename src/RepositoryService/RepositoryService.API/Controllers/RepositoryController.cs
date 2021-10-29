@@ -22,17 +22,16 @@ namespace RepositoryService.API.Controllers
         }
 
         [HttpPost("AddRecord")]
-        [ProducesResponseType(typeof(RecordResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(GenericResult), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-        //[ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> AddRecord([FromBody] AddRecordCommand request)
         {
-            RecordResponse response = await _mediator.Send(request);
+            GenericResult result = await _mediator.Send(request);
 
-            if (response == null)
-                return StatusCode(500, "Check Elasticsearch logs for more information");
+            if (!result.IsSucceeded)
+                return StatusCode(result.StatusCode, $"Check Elasticsearch logs for more information : {result.Message}");
 
-            return Ok(response);
+            return Ok(result);
         }
     }
 }

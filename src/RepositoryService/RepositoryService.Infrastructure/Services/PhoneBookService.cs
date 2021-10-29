@@ -1,4 +1,5 @@
 ﻿using RepositoryService.Core.Entities;
+using RepositoryService.Core.Models;
 using RepositoryService.Infrastructure.Data;
 using RepositoryService.Infrastructure.Services.Interfaces;
 using System;
@@ -20,15 +21,10 @@ namespace RepositoryService.Infrastructure.Services
             _context = context;
         }
 
-        public Record AddRecord(Record record)
+        public async Task AddRecord(Record record)
         {
-            Monitor.Enter(_lock);
-            _context.Add(record);
-            _context.SaveChanges();
-            Record recordResp = _context.Records.OrderByDescending(x => x.RecordId).FirstOrDefault();
-            Monitor.Exit(_lock);
-
-            return recordResp;
+            await _context.AddAsync(record);
+            await _context.SaveChangesAsync();
         }
     }
 }
