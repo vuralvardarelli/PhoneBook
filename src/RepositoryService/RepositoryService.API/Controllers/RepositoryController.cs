@@ -86,5 +86,21 @@ namespace RepositoryService.API.Controllers
 
             return Ok(result);
         }
+
+        [HttpGet("GetRecord")]
+        [ProducesResponseType(typeof(GenericResult), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+        public async Task<ActionResult> GetRecord(int recordId)
+        {
+            GenericResult result = await _mediator.Send(new GetRecordQuery()
+            {
+                RecordId = recordId
+            });
+
+            if (!result.IsSucceeded)
+                return StatusCode(result.StatusCode, $"Check Elasticsearch logs for more information : {result.Message}");
+
+            return Ok(result);
+        }
     }
 }

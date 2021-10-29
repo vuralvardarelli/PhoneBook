@@ -35,7 +35,7 @@ namespace RepositoryService.Infrastructure.Services
 
         public async Task RemoveRecord(int recordId)
         {
-            Record record = _context.Records.FirstOrDefault(x => x.RecordId == recordId);
+            Record record = await _context.Records.FirstOrDefaultAsync(x => x.RecordId == recordId);
 
             if (record == null)
                 throw new ArgumentNullException("record");
@@ -46,7 +46,7 @@ namespace RepositoryService.Infrastructure.Services
 
         public async Task AddContactInfo(int recordId, ContactInfo contactInfo)
         {
-            Record record = _context.Records.Include("ContactInfos").FirstOrDefault(x => x.RecordId == recordId);
+            Record record = await _context.Records.Include("ContactInfos").FirstOrDefaultAsync(x => x.RecordId == recordId);
 
             if (record == null)
                 throw new ArgumentNullException("record");
@@ -61,7 +61,7 @@ namespace RepositoryService.Infrastructure.Services
 
         public async Task RemoveContactInfo(int contactInfoId)
         {
-            ContactInfo contactInfo = _context.ContactInfos.FirstOrDefault(x => x.ContactInfoId == contactInfoId);
+            ContactInfo contactInfo = await _context.ContactInfos.FirstOrDefaultAsync(x => x.ContactInfoId == contactInfoId);
 
             if (contactInfo == null)
                 throw new ArgumentNullException("ContactInfo");
@@ -81,12 +81,21 @@ namespace RepositoryService.Infrastructure.Services
             else
             {
                 records = await _context.Records.Include("ContactInfos").ToListAsync();
-                records = JsonConvert.DeserializeObject<List<Record>>(JsonConvert.SerializeObject(records));
 
                 await _cacheService.AddWithExpire(_appSettings.RecordsCacheKey, records, _appSettings.RecordsCacheTimeoutAsSeconds);
             }
 
             return records;
+        }
+
+        public async Task<Record> GetRecord(int recordId)
+        {
+            Record record = await _context.Records.Include("ContactInfos").FirstOrDefaultAsync(x => x.RecordId == recordId);
+
+            if (record == null)
+                throw new ArgumentNullException("record");
+
+            return record;
         }
     }
 }

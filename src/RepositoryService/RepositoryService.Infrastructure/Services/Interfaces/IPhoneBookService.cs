@@ -15,5 +15,6 @@ namespace RepositoryService.Infrastructure.Services.Interfaces
         Task AddContactInfo(int recordId, ContactInfo contactInfo);
         Task RemoveContactInfo(int contactInfoId);
         Task<List<Record>> GetRecords();
+        Task<Record> GetRecord(int recordId);
     }
 }
