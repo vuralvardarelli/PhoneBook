@@ -11,5 +11,8 @@ namespace RepositoryService.Infrastructure.Services.Interfaces
     public interface IPhoneBookService
     {
         Task AddRecord(Record record);
+        Task RemoveRecord(int recordId);
+        Task AddContactInfo(int recordId, ContactInfo contactInfo);
+        Task RemoveContactInfo(int contactInfoId);
     }
 }

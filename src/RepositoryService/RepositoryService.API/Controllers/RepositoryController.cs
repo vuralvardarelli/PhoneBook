@@ -33,5 +33,44 @@ namespace RepositoryService.API.Controllers
 
             return Ok(result);
         }
+
+        [HttpDelete("RemoveRecord")]
+        [ProducesResponseType(typeof(GenericResult), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+        public async Task<ActionResult> RemoveRecord([FromBody] RemoveRecordCommand request)
+        {
+            GenericResult result = await _mediator.Send(request);
+
+            if (!result.IsSucceeded)
+                return StatusCode(result.StatusCode, $"Check Elasticsearch logs for more information : {result.Message}");
+
+            return Ok(result);
+        }
+
+        [HttpPost("AddContactInfo")]
+        [ProducesResponseType(typeof(GenericResult), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+        public async Task<ActionResult> AddContactInfo([FromBody] AddContactInfoCommand request)
+        {
+            GenericResult result = await _mediator.Send(request);
+
+            if (!result.IsSucceeded)
+                return StatusCode(result.StatusCode, $"Check Elasticsearch logs for more information : {result.Message}");
+
+            return Ok(result);
+        }
+
+        [HttpDelete("RemoveContactInfo")]
+        [ProducesResponseType(typeof(GenericResult), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+        public async Task<ActionResult> RemoveContactInfo([FromBody] RemoveContactInfoCommand request)
+        {
+            GenericResult result = await _mediator.Send(request);
+
+            if (!result.IsSucceeded)
+                return StatusCode(result.StatusCode, $"Check Elasticsearch logs for more information : {result.Message}");
+
+            return Ok(result);
+        }
     }
 }
