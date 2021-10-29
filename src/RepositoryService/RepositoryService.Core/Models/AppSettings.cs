@@ -11,5 +11,7 @@ namespace RepositoryService.Core.Models
         public string RedisUrl { get; set; }
         public string ElasticsearchUrl { get; set; }
         public string ElasticsearchIndex { get; set; }
+        public string RecordsCacheKey { get; set; }
+        public int RecordsCacheTimeoutAsSeconds { get; set; }
     }
 }

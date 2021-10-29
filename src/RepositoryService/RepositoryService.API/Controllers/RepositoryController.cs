@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryService.Application.Commands;
+using RepositoryService.Application.Queries;
 using RepositoryService.Application.Responses;
 using RepositoryService.Core.Models;
 using System;
@@ -66,6 +67,19 @@ namespace RepositoryService.API.Controllers
         public async Task<ActionResult> RemoveContactInfo([FromBody] RemoveContactInfoCommand request)
         {
             GenericResult result = await _mediator.Send(request);
+
+            if (!result.IsSucceeded)
+                return StatusCode(result.StatusCode, $"Check Elasticsearch logs for more information : {result.Message}");
+
+            return Ok(result);
+        }
+
+        [HttpGet("GetRecords")]
+        [ProducesResponseType(typeof(GenericResult), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+        public async Task<ActionResult> GetRecords()
+        {
+            GenericResult result = await _mediator.Send(new GetRecordsQuery());
 
             if (!result.IsSucceeded)
                 return StatusCode(result.StatusCode, $"Check Elasticsearch logs for more information : {result.Message}");

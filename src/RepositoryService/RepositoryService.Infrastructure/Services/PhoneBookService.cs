@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using RepositoryService.Core.Entities;
 using RepositoryService.Core.Models;
 using RepositoryService.Infrastructure.Data;
@@ -15,11 +16,15 @@ namespace RepositoryService.Infrastructure.Services
     public class PhoneBookService : IPhoneBookService
     {
         private readonly PhonebookContext _context;
+        private readonly ICacheService _cacheService;
+        private readonly AppSettings _appSettings;
         private static object _lock = new object();
 
-        public PhoneBookService(PhonebookContext context)
+        public PhoneBookService(PhonebookContext context, ICacheService cacheService, AppSettings appSettings)
         {
             _context = context;
+            _cacheService = cacheService;
+            _appSettings = appSettings;
         }
 
         public async Task AddRecord(Record record)
@@ -63,6 +68,25 @@ namespace RepositoryService.Infrastructure.Services
 
             _context.ContactInfos.Remove(contactInfo);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<Record>> GetRecords()
+        {
+            List<Record> records = null;
+
+            if (await _cacheService.Any(_appSettings.RecordsCacheKey))
+            {
+                records = await _cacheService.Get<List<Record>>(_appSettings.RecordsCacheKey);
+            }
+            else
+            {
+                records = await _context.Records.Include("ContactInfos").ToListAsync();
+                records = JsonConvert.DeserializeObject<List<Record>>(JsonConvert.SerializeObject(records));
+
+                await _cacheService.AddWithExpire(_appSettings.RecordsCacheKey, records, _appSettings.RecordsCacheTimeoutAsSeconds);
+            }
+
+            return records;
         }
     }
 }
