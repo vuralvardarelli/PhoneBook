@@ -1,3 +1,4 @@
+using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using RepositoryService.API.Middlewares.RequestResponse;
 using RepositoryService.Application.Handlers;
+using RepositoryService.Application.Validators;
 using RepositoryService.Core.Models;
 using RepositoryService.Infrastructure;
 using RepositoryService.Infrastructure.Data;
@@ -62,7 +64,13 @@ namespace RepositoryService.API
 
             services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true));
 
-            services.AddMvc();
+            services.AddMvc().AddFluentValidation(fv =>
+            {
+                fv.RegisterValidatorsFromAssemblyContaining<AddRecordCommandValidator>();
+                fv.RegisterValidatorsFromAssemblyContaining<RemoveRecordCommandValidator>();
+                fv.RegisterValidatorsFromAssemblyContaining<AddContactInfoCommandValidator>();
+                fv.RegisterValidatorsFromAssemblyContaining<RemoveContactInfoCommandValidator>();
+            });
 
             // Adding services we created via Infrastructure project's ServiceRegistration.cs
             services.AddInfrastructure();
