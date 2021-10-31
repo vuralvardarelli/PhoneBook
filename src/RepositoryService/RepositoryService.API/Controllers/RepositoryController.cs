@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using RepositoryService.Application.Commands;
 using RepositoryService.Application.Queries;
 using RepositoryService.Application.Responses;
+using RepositoryService.Core.Entities;
 using RepositoryService.Core.Models;
 using System;
 using System.Collections.Generic;
@@ -23,7 +24,7 @@ namespace RepositoryService.API.Controllers
         }
 
         [HttpPost("AddRecord")]
-        [ProducesResponseType(typeof(GenericResult), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public async Task<ActionResult> AddRecord([FromBody] AddRecordCommand request)
         {
@@ -32,11 +33,11 @@ namespace RepositoryService.API.Controllers
             if (!result.IsSucceeded)
                 return StatusCode(result.StatusCode, $"Check Elasticsearch logs for more information : {result.Message}");
 
-            return Ok(result);
+            return Ok();
         }
 
         [HttpDelete("RemoveRecord")]
-        [ProducesResponseType(typeof(GenericResult), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public async Task<ActionResult> RemoveRecord([FromBody] RemoveRecordCommand request)
         {
@@ -45,11 +46,11 @@ namespace RepositoryService.API.Controllers
             if (!result.IsSucceeded)
                 return StatusCode(result.StatusCode, $"Check Elasticsearch logs for more information : {result.Message}");
 
-            return Ok(result);
+            return Ok();
         }
 
         [HttpPost("AddContactInfo")]
-        [ProducesResponseType(typeof(GenericResult), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public async Task<ActionResult> AddContactInfo([FromBody] AddContactInfoCommand request)
         {
@@ -58,11 +59,11 @@ namespace RepositoryService.API.Controllers
             if (!result.IsSucceeded)
                 return StatusCode(result.StatusCode, $"Check Elasticsearch logs for more information : {result.Message}");
 
-            return Ok(result);
+            return Ok();
         }
 
         [HttpDelete("RemoveContactInfo")]
-        [ProducesResponseType(typeof(GenericResult), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public async Task<ActionResult> RemoveContactInfo([FromBody] RemoveContactInfoCommand request)
         {
@@ -71,11 +72,11 @@ namespace RepositoryService.API.Controllers
             if (!result.IsSucceeded)
                 return StatusCode(result.StatusCode, $"Check Elasticsearch logs for more information : {result.Message}");
 
-            return Ok(result);
+            return Ok();
         }
 
         [HttpGet("GetRecords")]
-        [ProducesResponseType(typeof(GenericResult), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(List<Record>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public async Task<ActionResult> GetRecords()
         {
@@ -84,11 +85,11 @@ namespace RepositoryService.API.Controllers
             if (!result.IsSucceeded)
                 return StatusCode(result.StatusCode, $"Check Elasticsearch logs for more information : {result.Message}");
 
-            return Ok(result);
+            return Ok(result.Data);
         }
 
         [HttpGet("GetRecord")]
-        [ProducesResponseType(typeof(GenericResult), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Record), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public async Task<ActionResult> GetRecord(int recordId)
         {
@@ -100,7 +101,7 @@ namespace RepositoryService.API.Controllers
             if (!result.IsSucceeded)
                 return StatusCode(result.StatusCode, $"Check Elasticsearch logs for more information : {result.Message}");
 
-            return Ok(result);
+            return Ok(result.Data);
         }
     }
 }

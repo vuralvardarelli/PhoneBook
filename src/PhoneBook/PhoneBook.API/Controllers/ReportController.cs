@@ -26,7 +26,13 @@ namespace PhoneBook.API.Controllers
 
         // Request to get a single report with UUID
         [HttpGet("getReport")]
-        public async Task<ActionResult> GetReports(string guid)
+        public async Task<ActionResult> GetReport(int reportId)
+        {
+            return Ok();
+        }
+
+        [HttpGet("getReportDetails")]
+        public async Task<ActionResult> GetReportDetails(int reportId)
         {
             return Ok();
         }

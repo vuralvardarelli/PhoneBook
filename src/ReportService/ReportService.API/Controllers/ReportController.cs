@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ReportService.Core.Entities;
 using ReportService.Core.Models;
 using ReportService.Infrastructure.Services.Interfaces;
 using System;
@@ -21,7 +22,7 @@ namespace ReportService.API.Controllers
         }
 
         [HttpGet("RequestReport")]
-        [ProducesResponseType(typeof(GenericResult), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public async Task<ActionResult> RequestReport()
         {
@@ -30,11 +31,11 @@ namespace ReportService.API.Controllers
             if (!result.IsSucceeded)
                 return StatusCode(result.StatusCode, $"Check Elasticsearch logs for more information : {result.Message}");
 
-            return Ok(result);
+            return Ok();
         }
 
         [HttpGet("ListReports")]
-        [ProducesResponseType(typeof(GenericResult), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(List<Report>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public async Task<ActionResult> ListReports()
         {
@@ -43,11 +44,11 @@ namespace ReportService.API.Controllers
             if (!result.IsSucceeded)
                 return StatusCode(result.StatusCode, $"Check Elasticsearch logs for more information : {result.Message}");
 
-            return Ok(result);
+            return Ok(result.Data);
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(GenericResult), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Report), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public async Task<ActionResult> GetReport(int reportId)
         {
@@ -56,11 +57,11 @@ namespace ReportService.API.Controllers
             if (!result.IsSucceeded)
                 return StatusCode(result.StatusCode, $"Check Elasticsearch logs for more information : {result.Message}");
 
-            return Ok(result);
+            return Ok(result.Data);
         }
 
         [HttpGet("GetReportDetails")]
-        [ProducesResponseType(typeof(GenericResult), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(List<ReportDetail>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public async Task<ActionResult> GetReportDetails(int reportId)
         {
@@ -69,7 +70,7 @@ namespace ReportService.API.Controllers
             if (!result.IsSucceeded)
                 return StatusCode(result.StatusCode, $"Check Elasticsearch logs for more information : {result.Message}");
 
-            return Ok(result);
+            return Ok(result.Data);
         }
     }
 }

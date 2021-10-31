@@ -40,7 +40,7 @@ namespace PhoneBook.API.Controllers
 
         // Get a record on phonebook with contactInfo
         [HttpGet("getRecord")]
-        public async Task<ActionResult> GetRecord(string name, string surname, string guid = "")
+        public async Task<ActionResult> GetRecord(int recordId)
         {
             return Ok();
         }
