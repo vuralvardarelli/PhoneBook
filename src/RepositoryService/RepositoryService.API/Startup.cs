@@ -1,4 +1,5 @@
 using EventBusRabbitMQ;
+using EventBusRabbitMQ.Producer;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using RabbitMQ.Client;
+using RepositoryService.API.Extensions;
 using RepositoryService.API.Middlewares.RequestResponse;
 using RepositoryService.API.RabbitMQ;
 using RepositoryService.Application.Handlers;
@@ -100,10 +102,11 @@ namespace RepositoryService.API
             });
 
             services.AddSingleton<EventBusRabbitMQConsumer>();
+            services.AddSingleton<EventBusRabbitMQProducer>();
             #endregion
 
             services.AddHttpContextAccessor();
-            services.AddDbContext<PhonebookContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("Postgres")));
+            services.AddDbContext<PhonebookContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("Postgres"))/*, ServiceLifetime.Transient*/);
             services.AddMediatR(typeof(AddRecordHandler).GetTypeInfo().Assembly);
             services.AddSwaggerGen(c =>
             {
@@ -137,6 +140,8 @@ namespace RepositoryService.API
             {
                 endpoints.MapControllers();
             });
+
+            app.UseRabbitListener();
         }
     }
 }

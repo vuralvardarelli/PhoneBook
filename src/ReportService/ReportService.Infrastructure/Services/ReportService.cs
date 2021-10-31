@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using EventBusRabbitMQ;
+using EventBusRabbitMQ.Producer;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using ReportService.Core;
 using ReportService.Core.Entities;
 using ReportService.Core.Models;
@@ -23,13 +26,15 @@ namespace ReportService.Infrastructure.Services
         private readonly AppSettings _appSettings;
         private static object _lock = new object();
         private static IHttpContextAccessor _httpContextAccessor;
+        private readonly EventBusRabbitMQProducer _eventBus;
 
-        public ReportService(ReportContext context, ILogger<ReportService> logger, ICacheService cacheService, AppSettings appSettings)
+        public ReportService(ReportContext context, ILogger<ReportService> logger, ICacheService cacheService, AppSettings appSettings, EventBusRabbitMQProducer eventBus)
         {
             _context = context;
             _logger = logger;
             _cacheService = cacheService;
             _appSettings = appSettings;
+            _eventBus = eventBus;
         }
 
         public async Task<GenericResult> CreateReportRequest()
@@ -54,7 +59,10 @@ namespace ReportService.Infrastructure.Services
                 result.IsSucceeded = true;
                 result.Data = report;
 
-                // TODO: Send Request to RepositoryService for all information.
+                _eventBus.PublishGetRecords(EventBusConstants.GetRecordsQueue, new EventBusRabbitMQ.Events.GetRecordsEvent()
+                {
+                    RequestId = report.ReportId
+                });
             }
             catch (Exception ex)
             {
@@ -123,6 +131,50 @@ namespace ReportService.Infrastructure.Services
             }
 
             return result;
+        }
+
+        public void UpdateReport(int reportId, List<Record> records)
+        {
+            try
+            {
+                Monitor.Enter(_lock);
+                Monitor.Exit(_lock);
+
+                Report report = _context.Reports.FirstOrDefault(x => x.ReportId == reportId);
+
+                if (report == null)
+                    throw new ArgumentNullException("report");
+
+                List<Record> recordsWithLocation = new List<Record>();
+
+                foreach (var record in records)
+                {
+                    foreach (var contactInfo in record.ContactInfos)
+                    {
+                        if (contactInfo.Type == 2)
+                            recordsWithLocation.Add(record);
+                    }
+                }
+
+                List<ReportDetail> reportDetails = (from record in recordsWithLocation
+                                                    from contactInfo in record.ContactInfos
+                                                    where contactInfo.Type == 2
+                                                    group record by contactInfo.Value into grp
+                                                    select new ReportDetail
+                                                    {
+                                                        Location = grp.Key,
+                                                        PeopleCountAtLocation = grp.Count()
+                                                    }).ToList();
+
+                report.Details = JsonConvert.SerializeObject(reportDetails);
+                report.Status = 1;
+                _context.Reports.Update(report);
+                _context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(Constants.ErrorLoggingTemplate, ex.GetType().Name, ex.Message, ex.StackTrace, "ReportService", "UpdateReport", _httpContextAccessor.HttpContext.TraceIdentifier);
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
 using EventBusRabbitMQ;
+using EventBusRabbitMQ.Producer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using RabbitMQ.Client;
+using ReportService.API.Extensions;
 using ReportService.API.Middlewares.RequestResponse;
 using ReportService.API.RabbitMQ;
 using ReportService.Core.Models;
@@ -76,6 +78,7 @@ namespace ReportService.API
             });
 
             services.AddSingleton<EventBusRabbitMQConsumer>();
+            services.AddSingleton<EventBusRabbitMQProducer>();
             #endregion
 
             services.AddHttpContextAccessor();
@@ -114,6 +117,8 @@ namespace ReportService.API
             {
                 endpoints.MapControllers();
             });
+
+            app.UseRabbitListener();
         }
     }
 }

@@ -10,6 +10,5 @@ namespace ReportService.Core.Models
     {
         public string Location { get; set; }
         public int PeopleCountAtLocation { get; set; }
-        public int PhoneNumberCountAtLocation { get; set; }
     }
 }

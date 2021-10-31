@@ -12,6 +12,7 @@ namespace ReportService.Infrastructure.Services.Interfaces
         Task<GenericResult> CreateReportRequest();
         Task<GenericResult> GetReports();
         Task<GenericResult> GetReport(int reportId);
+        void UpdateReport(int reportId, List<Record> records);
 
     }
 }

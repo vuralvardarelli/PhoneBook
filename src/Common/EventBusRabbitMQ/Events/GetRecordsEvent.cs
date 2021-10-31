@@ -8,5 +8,6 @@ namespace EventBusRabbitMQ.Events
 {
     public class GetRecordsEvent
     {
+        public int RequestId { get; set; }
     }
 }
