@@ -12,6 +12,7 @@ namespace ReportService.Infrastructure
         {
             services.AddScoped<ICacheContext, CacheContext>();
             services.AddScoped<ICacheService, RedisCacheService>();
+            services.AddScoped<IReportService, Services.ReportService>();
         }
     }
 }
