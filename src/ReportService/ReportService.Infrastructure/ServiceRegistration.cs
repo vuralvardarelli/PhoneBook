@@ -1,9 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ReportService.Infrastructure.Data;
+using ReportService.Infrastructure.Data.Interfaces;
+using ReportService.Infrastructure.Services;
+using ReportService.Infrastructure.Services.Interfaces;
 
 namespace ReportService.Infrastructure
 {
@@ -11,6 +10,8 @@ namespace ReportService.Infrastructure
     {
         public static void AddInfrastructure(this IServiceCollection services)
         {
+            services.AddScoped<ICacheContext, CacheContext>();
+            services.AddScoped<ICacheService, RedisCacheService>();
         }
     }
 }
