@@ -176,5 +176,33 @@ namespace ReportService.Infrastructure.Services
                 _logger.LogError(Constants.ErrorLoggingTemplate, ex.GetType().Name, ex.Message, ex.StackTrace, "ReportService", "UpdateReport", _httpContextAccessor.HttpContext.TraceIdentifier);
             }
         }
+
+        public async Task<GenericResult> GetReportDetails(int reportId)
+        {
+            GenericResult result = new GenericResult();
+
+            try
+            {
+                Report report = await _context.Reports.FirstOrDefaultAsync(x => x.ReportId == reportId);
+
+                if (report == null)
+                    throw new ArgumentNullException("report");
+
+                if (report.Status != 1)
+                    throw new ArgumentNullException("reportDetails");
+
+                result.Data = JsonConvert.DeserializeObject<List<ReportDetail>>(report.Details);
+                result.IsSucceeded = true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(Constants.ErrorLoggingTemplate, ex.GetType().Name, ex.Message, ex.StackTrace, "ReportService", "GetReportDetails", _httpContextAccessor.HttpContext.TraceIdentifier);
+                result.StatusCode = 500;
+                result.Message = ex.Message;
+                result.Data = ex;
+            }
+
+            return result;
+        }
     }
 }

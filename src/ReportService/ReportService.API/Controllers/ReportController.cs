@@ -58,5 +58,18 @@ namespace ReportService.API.Controllers
 
             return Ok(result);
         }
+
+        [HttpGet("GetReportDetails")]
+        [ProducesResponseType(typeof(GenericResult), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+        public async Task<ActionResult> GetReportDetails(int reportId)
+        {
+            GenericResult result = await _reportService.GetReportDetails(reportId);
+
+            if (!result.IsSucceeded)
+                return StatusCode(result.StatusCode, $"Check Elasticsearch logs for more information : {result.Message}");
+
+            return Ok(result);
+        }
     }
 }
