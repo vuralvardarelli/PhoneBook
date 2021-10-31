@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ReportService.Infrastructure.Services
@@ -41,9 +42,11 @@ namespace ReportService.Infrastructure.Services
                 report.RequestedDateTime = DateTime.Now;
                 report.Status = 0;
 
-                await _context.Reports.AddAsync(report);
-                await _context.SaveChangesAsync();
+                Monitor.Enter(_lock);
+                _context.Reports.Add(report);
+                _context.SaveChanges();
                 report = _context.Reports.OrderByDescending(x => x.ReportId).FirstOrDefault();
+                Monitor.Exit(_lock);
 
                 if (report == null)
                     throw new ArgumentNullException("report");
@@ -61,7 +64,7 @@ namespace ReportService.Infrastructure.Services
                 result.Data = ex;
             }
 
-            return result;
+            return await Task.FromResult(result);
         }
 
         public async Task<GenericResult> GetReport(int reportId)

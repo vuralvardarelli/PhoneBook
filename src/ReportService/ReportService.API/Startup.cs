@@ -1,3 +1,4 @@
+using EventBusRabbitMQ;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -5,7 +6,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using RabbitMQ.Client;
 using ReportService.API.Middlewares.RequestResponse;
+using ReportService.API.RabbitMQ;
 using ReportService.Core.Models;
 using ReportService.Infrastructure;
 using ReportService.Infrastructure.Data;
@@ -50,6 +53,31 @@ namespace ReportService.API
             Configuration.GetSection("AppSettings").Bind(appSettings);
             services.AddSingleton<AppSettings>(appSettings);
             services.AddInfrastructure();
+
+            #region RabbitMQ Dependency
+            services.AddSingleton<IRabbitMQConnection>(sp =>
+            {
+                var factory = new ConnectionFactory()
+                {
+                    HostName = Configuration["EventBus:HostName"]
+                };
+
+                if (!string.IsNullOrEmpty(Configuration["EventBus:UserName"]))
+                {
+                    factory.UserName = Configuration["EventBus:UserName"];
+                }
+
+                if (!string.IsNullOrEmpty(Configuration["EventBus:Password"]))
+                {
+                    factory.Password = Configuration["EventBus:Password"];
+                }
+
+                return new RabbitMQConnection(factory);
+            });
+
+            services.AddSingleton<EventBusRabbitMQConsumer>();
+            #endregion
+
             services.AddHttpContextAccessor();
             services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true));
 

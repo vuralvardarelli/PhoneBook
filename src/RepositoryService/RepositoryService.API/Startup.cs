@@ -1,3 +1,4 @@
+using EventBusRabbitMQ;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -9,7 +10,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using RabbitMQ.Client;
 using RepositoryService.API.Middlewares.RequestResponse;
+using RepositoryService.API.RabbitMQ;
 using RepositoryService.Application.Handlers;
 using RepositoryService.Application.Validators;
 using RepositoryService.Core.Models;
@@ -74,6 +77,31 @@ namespace RepositoryService.API
 
             // Adding services we created via Infrastructure project's ServiceRegistration.cs
             services.AddInfrastructure();
+
+            #region RabbitMQ Dependency
+            services.AddSingleton<IRabbitMQConnection>(sp =>
+            {
+                var factory = new ConnectionFactory()
+                {
+                    HostName = Configuration["EventBus:HostName"]
+                };
+
+                if (!string.IsNullOrEmpty(Configuration["EventBus:UserName"]))
+                {
+                    factory.UserName = Configuration["EventBus:UserName"];
+                }
+
+                if (!string.IsNullOrEmpty(Configuration["EventBus:Password"]))
+                {
+                    factory.Password = Configuration["EventBus:Password"];
+                }
+
+                return new RabbitMQConnection(factory);
+            });
+
+            services.AddSingleton<EventBusRabbitMQConsumer>();
+            #endregion
+
             services.AddHttpContextAccessor();
             services.AddDbContext<PhonebookContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("Postgres")));
             services.AddMediatR(typeof(AddRecordHandler).GetTypeInfo().Assembly);
