@@ -107,7 +107,7 @@ namespace RepositoryService.API
 
             services.AddHttpContextAccessor();
             services.AddDbContext<PhonebookContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("Postgres"))/*, ServiceLifetime.Transient*/);
-            services.AddMediatR(typeof(AddRecordHandler).GetTypeInfo().Assembly);
+            services.AddMediatR(new Type[] { typeof(AddRecordHandler), typeof(AddContactInfoHandler), typeof(GetRecordHandler), typeof(GetRecordsHandler), typeof(RemoveContactInfoHandler), typeof(RemoveRecordHandler) });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "RepositoryService.API", Version = "v1" });

@@ -1,0 +1,97 @@
+version: '3.4'
+
+services:
+    postgresdb:
+        container_name: postgresdb
+        ports:
+            - "5432:5432"
+        environment:
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=vural1234@
+            - POSTGRES_DB=test-db
+            - POSTGRES_PORT=5432
+        restart: always
+
+    redis:
+        container_name: redis
+        ports:
+            - "6379:6379"
+        restart: always
+
+    elasticsearchs:
+        container_name: elasticsearchsv
+        environment:
+            - xpack.security.enabled=false
+            - "discovery.type=single-node"
+        volumes:
+            - elasticsearch-data:/usr/share/elasticsearch/data
+        ports:
+            - "9200:9200"
+            - "9300:9300"
+
+    rabbitmq:
+        container_name: rabbitmq
+        restart: always
+        ports:
+            - "5672:5672"
+            - "15672:15672"
+
+    repositoryservice.api:
+        container_name: repositoryserviceapi
+        restart: on-failure
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Development
+            - "ConnectionStrings:Postgres=User ID=postgres;Password=vural1234@;Server=postgresdb;Port=5432;Database=PhoneBookDb;Integrated Security=true;Pooling=true;"
+            - "EventBus:HostName=rabbitmq"
+            - "AppSettings:RedisUrl=http://redis"
+            - "AppSettings:ElasticsearchUrl=http://elasticsearchs:9200"
+            - "AppSettings:ElasticsearchIndex=repository"
+            - "AppSettings:RecordsCacheKey=records"
+            - "AppSettings:RecordsCacheTimeoutAsSeconds=300"
+        depends_on:
+            - postgresdb
+            - rabbitmq
+            - redis
+            - elasticsearchs
+        ports:
+            - "9998:80"
+
+    reportservice.api:
+        container_name: repositoryservice.api
+        restart: on-failure
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Development
+            - "ConnectionStrings:Postgres=User ID=postgres;Password=vural1234@;Server=postgresdb;Port=5432;Database=ReportDb;Integrated Security=true;Pooling=true;"
+            - "EventBus:HostName=rabbitmq"
+            - "AppSettings:RedisUrl=http://redis"
+            - "AppSettings:ElasticsearchUrl=http://elasticsearchs:9200"
+            - "AppSettings:ElasticsearchIndex=repository"
+            - "AppSettings:RecordsCacheKey=reports"
+            - "AppSettings:RecordsCacheTimeoutAsSeconds=300"
+        depends_on:
+            - postgresdb
+            - rabbitmq
+            - redis
+            - elasticsearchs
+        ports:
+            - "9999:80"
+
+    phonebook.api:
+        container_name: phonebookapi
+        restart: on-failure
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Development
+            - "AppSettings:RepositoryServiceUrl=http://repositoryservice.api"
+            - "AppSettings:ReportServiceUrl=http://reportservice.api"
+            - "AppSettings:ElasticsearchUrl=http://elasticsearchs:9200"
+            - "AppSettings:ElasticsearchIndex=phonebook"
+        depends_on:
+            - elasticsearchs
+            - repositoryservice.api
+            - reportservice.api
+        ports:
+            - "9997:80"
+
+volumes:
+    elasticsearch-data:
+        driver: local
