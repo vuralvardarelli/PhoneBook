@@ -25,15 +25,16 @@ namespace ReportService.Infrastructure.Services
         private readonly ICacheService _cacheService;
         private readonly AppSettings _appSettings;
         private static object _lock = new object();
-        private static IHttpContextAccessor _httpContextAccessor;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly EventBusRabbitMQProducer _eventBus;
 
-        public ReportService(ReportContext context, ILogger<ReportService> logger, ICacheService cacheService, AppSettings appSettings, EventBusRabbitMQProducer eventBus)
+        public ReportService(ReportContext context, ILogger<ReportService> logger, ICacheService cacheService, AppSettings appSettings, IHttpContextAccessor httpContextAccessor, EventBusRabbitMQProducer eventBus)
         {
             _context = context;
             _logger = logger;
             _cacheService = cacheService;
             _appSettings = appSettings;
+            _httpContextAccessor = httpContextAccessor;
             _eventBus = eventBus;
         }
 

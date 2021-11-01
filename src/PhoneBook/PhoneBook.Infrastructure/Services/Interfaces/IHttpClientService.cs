@@ -17,7 +17,7 @@ namespace PhoneBook.Infrastructure.Services.Interfaces
         Task<GenericResult> GetRecords();
 
 
-        void RequestReport();
+        Task<GenericResult> RequestReport();
         Task<GenericResult> GetAllReports();
         Task<GenericResult> GetReport(int reportId);
         Task<GenericResult> GetReportDetails(int reportId);

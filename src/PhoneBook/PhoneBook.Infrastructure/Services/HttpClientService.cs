@@ -1,4 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using PhoneBook.Core;
 using PhoneBook.Core.Models;
 using PhoneBook.Infrastructure.Services.Interfaces;
 using System;
@@ -15,17 +18,19 @@ namespace PhoneBook.Infrastructure.Services
         private readonly IHttpClientFactory _clientFactory;
         private HttpClient _repositoryClient;
         private HttpClient _reportClient;
+        private readonly ILogger<HttpClientService> _logger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public HttpClientService(IHttpClientFactory clientFactory)
+        public HttpClientService(IHttpContextAccessor httpContextAccessor,IHttpClientFactory clientFactory, HttpClient repositoryClient, HttpClient reportClient, ILogger<HttpClientService> logger)
         {
             _clientFactory = clientFactory;
-            _repositoryClient = _clientFactory.CreateClient("repositoryService");
+            _repositoryClient = _clientFactory.CreateClient("repositoryService"); 
             _reportClient = _clientFactory.CreateClient("reportService");
+            _logger = logger;
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        //HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, $"advert/get?id={id}");
 
-        //HttpResponseMessage response = await _client.SendAsync(request);
 
         #region RepositoryService
         public Task AddContactInfo(AddContactInfoCommand request)
@@ -68,14 +73,25 @@ namespace PhoneBook.Infrastructure.Services
 
             HttpResponseMessage response = await _reportClient.SendAsync(request);
 
-            if (response.IsSuccessStatusCode)
+            try
             {
-                result.Data = JsonConvert.DeserializeObject<Report>(await response.Content.ReadAsStringAsync());
-                result.IsSucceeded = true;
+                if (response.IsSuccessStatusCode)
+                {
+                    result.Data = JsonConvert.DeserializeObject<Report>(await response.Content.ReadAsStringAsync());
+                    result.IsSucceeded = true;
+                }
+                else
+                {
+                    result.StatusCode = (int)response.StatusCode;
+                    result.Message = response.ReasonPhrase;
+                }
             }
-            else
+            catch (Exception ex)
             {
+                _logger.LogError(Constants.ErrorLoggingTemplate, ex.GetType().Name, ex.Message, ex.StackTrace, "HttpClientService", "GetReport", _httpContextAccessor.HttpContext.TraceIdentifier);
                 result.StatusCode = (int)response.StatusCode;
+                result.Message = ex.Message;
+                result.Data = ex;
             }
 
             return result;
@@ -89,28 +105,63 @@ namespace PhoneBook.Infrastructure.Services
 
             HttpResponseMessage response = await _reportClient.SendAsync(request);
 
-            if (response.IsSuccessStatusCode)
+            try
             {
-                result.Data = JsonConvert.DeserializeObject<List<ReportDetail>>(await response.Content.ReadAsStringAsync());
-                result.IsSucceeded = true;
+                if (response.IsSuccessStatusCode)
+                {
+                    result.Data = JsonConvert.DeserializeObject<List<ReportDetail>>(await response.Content.ReadAsStringAsync());
+                    result.IsSucceeded = true;
+                }
+                else
+                {
+                    result.StatusCode = (int)response.StatusCode;
+                    result.Message = response.ReasonPhrase;
+                }
             }
-            else
+            catch (Exception ex)
             {
+                _logger.LogError(Constants.ErrorLoggingTemplate, ex.GetType().Name, ex.Message, ex.StackTrace, "HttpClientService", "GetReportDetails", _httpContextAccessor.HttpContext.TraceIdentifier);
                 result.StatusCode = (int)response.StatusCode;
+                result.Message = ex.Message;
+                result.Data = ex;
             }
 
             return result;
         }
 
-        public void RequestReport()
+        public async Task<GenericResult> RequestReport()
         {
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, $"report/RequestReport");
+            GenericResult result = new GenericResult();
 
-            _ = _reportClient.SendAsync(request).Result;
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, $"report/RequestReport/");
+
+            HttpResponseMessage response = await _reportClient.SendAsync(request);
+
+            try
+            {
+                if (response.IsSuccessStatusCode)
+                {
+                    result.IsSucceeded = true;
+                }
+                else
+                {
+                    result.StatusCode = (int)response.StatusCode;
+                    result.Message = response.ReasonPhrase;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(Constants.ErrorLoggingTemplate, ex.GetType().Name, ex.Message, ex.StackTrace, "HttpClientService", "RequestReport", _httpContextAccessor.HttpContext.TraceIdentifier);
+                result.StatusCode = (int)response.StatusCode;
+                result.Message = ex.Message;
+                result.Data = ex;
+            }
+
+            return result;
         }
 
         public async Task<GenericResult> GetAllReports()
-        {          
+        {
 
             GenericResult result = new GenericResult();
 
@@ -118,14 +169,25 @@ namespace PhoneBook.Infrastructure.Services
 
             HttpResponseMessage response = await _reportClient.SendAsync(request);
 
-            if (response.IsSuccessStatusCode)
+            try
             {
-                result.Data = JsonConvert.DeserializeObject<List<Report>>(await response.Content.ReadAsStringAsync());
-                result.IsSucceeded = true;
+                if (response.IsSuccessStatusCode)
+                {
+                    result.Data = JsonConvert.DeserializeObject<List<Report>>(await response.Content.ReadAsStringAsync());
+                    result.IsSucceeded = true;
+                }
+                else
+                {
+                    result.StatusCode = (int)response.StatusCode;
+                    result.Message = response.ReasonPhrase;
+                }
             }
-            else
+            catch (Exception ex)
             {
+                _logger.LogError(Constants.ErrorLoggingTemplate, ex.GetType().Name, ex.Message, ex.StackTrace, "HttpClientService", "GetAllReports", _httpContextAccessor.HttpContext.TraceIdentifier);
                 result.StatusCode = (int)response.StatusCode;
+                result.Message = ex.Message;
+                result.Data = ex;
             }
 
             return result;

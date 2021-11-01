@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PhoneBook.Core.Models;
 using PhoneBook.Infrastructure.Services.Interfaces;
-using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace PhoneBook.API.Controllers
@@ -18,33 +18,59 @@ namespace PhoneBook.API.Controllers
             _httpClientService = httpClientService;
         }
 
-
-
         //Requesting for a report
         [HttpGet]
-        public void RequestReport()
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+        public async Task<ActionResult> RequestReport()
         {
-            _httpClientService.RequestReport();
+            GenericResult result = await _httpClientService.RequestReport();
+
+            if (!result.IsSucceeded)
+                return StatusCode(result.StatusCode, $"Check Elasticsearch logs for more information : {result.Message}");
+
+            return Ok();
         }
 
         // Request to get all reports with statuses
         [HttpGet("getAllReports")]
+        [ProducesResponseType(typeof(List<Report>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public async Task<ActionResult> GetAllReports()
         {
-            return Ok(await _httpClientService.GetAllReports());
+            GenericResult result = await _httpClientService.GetAllReports();
+
+            if (!result.IsSucceeded)
+                return StatusCode(result.StatusCode, $"Check Elasticsearch logs for more information : {result.Message}");
+
+            return Ok(result.Data);
         }
 
-        // Request to get a single report with UUID
+        // Request to get a single report with id
         [HttpGet("getReport")]
+        [ProducesResponseType(typeof(Report), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public async Task<ActionResult> GetReport(int reportId)
         {
-            return Ok(await _httpClientService.GetReport(reportId));
+            GenericResult result = await _httpClientService.GetReport(reportId);
+
+                if(!result.IsSucceeded)
+                    return StatusCode(result.StatusCode, $"Check Elasticsearch logs for more information : {result.Message}");
+
+            return Ok(result.Data);
         }
 
         [HttpGet("getReportDetails")]
+        [ProducesResponseType(typeof(List<ReportDetail>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public async Task<ActionResult> GetReportDetails(int reportId)
         {
-            return Ok(await _httpClientService.GetReportDetails(reportId));
+            GenericResult result = await _httpClientService.GetReportDetails(reportId);
+
+            if (!result.IsSucceeded)
+                return StatusCode(result.StatusCode, $"Check Elasticsearch logs for more information : {result.Message}");
+
+            return Ok(result.Data);
         }
     }
 }

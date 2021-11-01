@@ -49,6 +49,8 @@ namespace PhoneBook.API
             Configuration.GetSection("AppSettings").Bind(appSettings);
             services.AddSingleton<AppSettings>(appSettings);
 
+            services.AddHttpContextAccessor();
+
             services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true));
 
             #region Repository Microservice HttpClient Init
