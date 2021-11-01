@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PhoneBook.Core\PhoneBook.Core.csproj" />
+    <ProjectReference Include="..\PhoneBook.Infrastructure\PhoneBook.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

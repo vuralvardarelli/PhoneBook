@@ -1,21 +1,18 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using PhoneBook.API.Middlewares.RequestResponse;
 using PhoneBook.Core.Models;
+using PhoneBook.Infrastructure.Services;
+using PhoneBook.Infrastructure.Services.Interfaces;
 using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Elasticsearch;
 using Serilog.Sinks.Elasticsearch;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace PhoneBook.API
 {
@@ -69,6 +66,8 @@ namespace PhoneBook.API
                 c.DefaultRequestHeaders.Add("Accept", "application/json");
             });
             #endregion
+
+            services.AddScoped<IHttpClientService, HttpClientService>();
 
             services.AddSwaggerGen(c =>
             {

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PhoneBook.Infrastructure.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,15 @@ namespace PhoneBook.API.Controllers
     [ApiController]
     public class ReportController : ControllerBase
     {
+        private readonly IHttpClientService _httpClientService;
+
+        public ReportController(IHttpClientService httpClientService)
+        {
+            _httpClientService = httpClientService;
+        }
+
+
+
         //Requesting for a report
         [HttpGet]
         public async Task<ActionResult> RequestReport()
@@ -28,7 +38,7 @@ namespace PhoneBook.API.Controllers
         [HttpGet("getReport")]
         public async Task<ActionResult> GetReport(int reportId)
         {
-            return Ok();
+            return Ok(await _httpClientService.GetReport(reportId));
         }
 
         [HttpGet("getReportDetails")]

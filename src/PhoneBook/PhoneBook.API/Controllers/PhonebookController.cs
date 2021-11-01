@@ -24,9 +24,9 @@ namespace PhoneBook.API.Controllers
             return Ok();
         }
 
-        // Updating a record's contactInfo(add) on phonebook.
-        [HttpPut("updateContactInfo")]
-        public async Task<ActionResult> UpdateContactInfo()
+        // Add a contactInfo to a record on phonebook.
+        [HttpPut("addContactInfo")]
+        public async Task<ActionResult> AddContactInfo()
         {
             return Ok();
         }
