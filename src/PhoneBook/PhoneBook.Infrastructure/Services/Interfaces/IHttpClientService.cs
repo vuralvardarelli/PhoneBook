@@ -9,10 +9,10 @@ namespace PhoneBook.Infrastructure.Services.Interfaces
 {
     public interface IHttpClientService
     {
-        Task CreateRecord(AddRecordCommand request);
-        Task DeleteRecord(RemoveRecordCommand request);
-        Task AddContactInfo(AddContactInfoCommand request);
-        Task DeleteContactInfo(RemoveContactInfoCommand request);
+        Task<GenericResult> CreateRecord(AddRecordCommand request);
+        Task<GenericResult> DeleteRecord(RemoveRecordCommand request);
+        Task<GenericResult> AddContactInfo(AddContactInfoCommand request);
+        Task<GenericResult> DeleteContactInfo(RemoveContactInfoCommand request);
         Task<GenericResult> GetRecord(int recordId);
         Task<GenericResult> GetRecords();
 

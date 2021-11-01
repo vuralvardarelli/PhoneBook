@@ -21,10 +21,10 @@ namespace PhoneBook.Infrastructure.Services
         private readonly ILogger<HttpClientService> _logger;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public HttpClientService(IHttpContextAccessor httpContextAccessor,IHttpClientFactory clientFactory, HttpClient repositoryClient, HttpClient reportClient, ILogger<HttpClientService> logger)
+        public HttpClientService(IHttpContextAccessor httpContextAccessor, IHttpClientFactory clientFactory, HttpClient repositoryClient, HttpClient reportClient, ILogger<HttpClientService> logger)
         {
             _clientFactory = clientFactory;
-            _repositoryClient = _clientFactory.CreateClient("repositoryService"); 
+            _repositoryClient = _clientFactory.CreateClient("repositoryService");
             _reportClient = _clientFactory.CreateClient("reportService");
             _logger = logger;
             _httpContextAccessor = httpContextAccessor;
@@ -33,34 +33,176 @@ namespace PhoneBook.Infrastructure.Services
 
 
         #region RepositoryService
-        public Task AddContactInfo(AddContactInfoCommand request)
+        public async Task<GenericResult> AddContactInfo(AddContactInfoCommand request)
         {
-            throw new NotImplementedException();
+            GenericResult result = new GenericResult();
+
+            var stringContent = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+
+            var response = await _repositoryClient.PostAsync("repository/AddContactInfo", stringContent);
+
+            try
+            {
+                result.IsSucceeded = true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(Constants.ErrorLoggingTemplate, ex.GetType().Name, ex.Message, ex.StackTrace, "HttpClientService", "AddContactInfo", _httpContextAccessor.HttpContext.TraceIdentifier);
+                result.StatusCode = (int)response.StatusCode;
+                result.Message = ex.Message;
+                result.Data = ex;
+            }
+
+            return result;
         }
 
-        public Task CreateRecord(AddRecordCommand request)
+        public async Task<GenericResult> CreateRecord(AddRecordCommand request)
         {
-            throw new NotImplementedException();
+            GenericResult result = new GenericResult();
+
+            var stringContent = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+
+            var response = await _repositoryClient.PostAsync("repository/AddRecord", stringContent);
+
+            try
+            {
+                result.IsSucceeded = true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(Constants.ErrorLoggingTemplate, ex.GetType().Name, ex.Message, ex.StackTrace, "HttpClientService", "CreateRecord", _httpContextAccessor.HttpContext.TraceIdentifier);
+                result.StatusCode = (int)response.StatusCode;
+                result.Message = ex.Message;
+                result.Data = ex;
+            }
+
+            return result;
         }
 
-        public Task DeleteContactInfo(RemoveContactInfoCommand request)
+        public async Task<GenericResult> DeleteContactInfo(RemoveContactInfoCommand request)
         {
-            throw new NotImplementedException();
+            GenericResult result = new GenericResult();
+
+            var stringContent = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+
+            var response = await _repositoryClient.PostAsync("repository/RemoveContactInfo", stringContent);
+
+            try
+            {
+                if (response.IsSuccessStatusCode)
+                {
+                    result.IsSucceeded = true;
+                }
+                else
+                {
+                    result.StatusCode = (int)response.StatusCode;
+                    result.Message = response.ReasonPhrase;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(Constants.ErrorLoggingTemplate, ex.GetType().Name, ex.Message, ex.StackTrace, "HttpClientService", "DeleteContactInfo", _httpContextAccessor.HttpContext.TraceIdentifier);
+                result.StatusCode = (int)response.StatusCode;
+                result.Message = ex.Message;
+                result.Data = ex;
+            }
+
+            return result;
         }
 
-        public Task DeleteRecord(RemoveRecordCommand request)
+        public async Task<GenericResult> DeleteRecord(RemoveRecordCommand request)
         {
-            throw new NotImplementedException();
+            GenericResult result = new GenericResult();
+
+            var stringContent = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+
+            var response = await _repositoryClient.PostAsync("repository/RemoveRecord", stringContent);
+
+            try
+            {
+                if (response.IsSuccessStatusCode)
+                {
+                    result.IsSucceeded = true;
+                }
+                else
+                {
+                    result.StatusCode = (int)response.StatusCode;
+                    result.Message = response.ReasonPhrase;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(Constants.ErrorLoggingTemplate, ex.GetType().Name, ex.Message, ex.StackTrace, "HttpClientService", "DeleteRecord", _httpContextAccessor.HttpContext.TraceIdentifier);
+                result.StatusCode = (int)response.StatusCode;
+                result.Message = ex.Message;
+                result.Data = ex;
+            }
+
+            return result;
         }
 
-        public Task<GenericResult> GetRecord(int recordId)
+        public async Task<GenericResult> GetRecord(int recordId)
         {
-            throw new NotImplementedException();
+            GenericResult result = new GenericResult();
+
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, $"repository/GetRecord?recordId={recordId}");
+
+            HttpResponseMessage response = await _repositoryClient.SendAsync(request);
+
+            try
+            {
+                if (response.IsSuccessStatusCode)
+                {
+                    result.Data = JsonConvert.DeserializeObject<Record>(await response.Content.ReadAsStringAsync());
+                    result.IsSucceeded = true;
+                }
+                else
+                {
+                    result.StatusCode = (int)response.StatusCode;
+                    result.Message = response.ReasonPhrase;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(Constants.ErrorLoggingTemplate, ex.GetType().Name, ex.Message, ex.StackTrace, "HttpClientService", "GetRecord", _httpContextAccessor.HttpContext.TraceIdentifier);
+                result.StatusCode = (int)response.StatusCode;
+                result.Message = ex.Message;
+                result.Data = ex;
+            }
+
+            return result;
         }
 
-        public Task<GenericResult> GetRecords()
+        public async Task<GenericResult> GetRecords()
         {
-            throw new NotImplementedException();
+            GenericResult result = new GenericResult();
+
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, $"repository/GetRecords");
+
+            HttpResponseMessage response = await _repositoryClient.SendAsync(request);
+
+            try
+            {
+                if (response.IsSuccessStatusCode)
+                {
+                    result.Data = JsonConvert.DeserializeObject<List<Record>>(await response.Content.ReadAsStringAsync());
+                    result.IsSucceeded = true;
+                }
+                else
+                {
+                    result.StatusCode = (int)response.StatusCode;
+                    result.Message = response.ReasonPhrase;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(Constants.ErrorLoggingTemplate, ex.GetType().Name, ex.Message, ex.StackTrace, "HttpClientService", "GetRecords", _httpContextAccessor.HttpContext.TraceIdentifier);
+                result.StatusCode = (int)response.StatusCode;
+                result.Message = ex.Message;
+                result.Data = ex;
+            }
+
+            return result;
         }
         #endregion
 

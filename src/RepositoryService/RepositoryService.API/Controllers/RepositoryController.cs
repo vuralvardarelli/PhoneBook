@@ -36,7 +36,7 @@ namespace RepositoryService.API.Controllers
             return Ok();
         }
 
-        [HttpDelete("RemoveRecord")]
+        [HttpPost("RemoveRecord")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public async Task<ActionResult> RemoveRecord([FromBody] RemoveRecordCommand request)
@@ -62,7 +62,7 @@ namespace RepositoryService.API.Controllers
             return Ok();
         }
 
-        [HttpDelete("RemoveContactInfo")]
+        [HttpPost("RemoveContactInfo")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public async Task<ActionResult> RemoveContactInfo([FromBody] RemoveContactInfoCommand request)
