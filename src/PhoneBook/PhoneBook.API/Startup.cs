@@ -6,6 +6,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using PhoneBook.API.Middlewares.RequestResponse;
+using PhoneBook.Core.Models;
+using Serilog;
+using Serilog.Events;
+using Serilog.Formatting.Elasticsearch;
+using Serilog.Sinks.Elasticsearch;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +23,20 @@ namespace PhoneBook.API
     {
         public Startup(IConfiguration configuration)
         {
+            Log.Logger = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Error)
+                .MinimumLevel.Override("System", LogEventLevel.Error)
+                .WriteTo.Elasticsearch(
+                    new ElasticsearchSinkOptions(
+                        new Uri(configuration["AppSettings:ElasticsearchUrl"]))
+                    {
+                        CustomFormatter = new ElasticsearchJsonFormatter(),
+                        IndexFormat = configuration["AppSettings:ElasticsearchIndex"]
+                    })
+                .MinimumLevel.Verbose()
+                .CreateLogger();
+
             Configuration = configuration;
         }
 
@@ -27,6 +47,29 @@ namespace PhoneBook.API
         {
 
             services.AddControllers();
+
+            AppSettings appSettings = new AppSettings();
+            Configuration.GetSection("AppSettings").Bind(appSettings);
+            services.AddSingleton<AppSettings>(appSettings);
+
+            services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true));
+
+            #region Repository Microservice HttpClient Init
+            services.AddHttpClient("repositoryService", c =>
+            {
+                c.BaseAddress = new Uri(appSettings.RepositoryServiceUrl);
+                c.DefaultRequestHeaders.Add("Accept", "application/json");
+            });
+            #endregion
+
+            #region Report Microservice HttpClient Init
+            services.AddHttpClient("reportService", c =>
+            {
+                c.BaseAddress = new Uri(appSettings.ReportServiceUrl);
+                c.DefaultRequestHeaders.Add("Accept", "application/json");
+            });
+            #endregion
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "PhoneBook.API", Version = "v1" });
@@ -42,6 +85,8 @@ namespace PhoneBook.API
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "PhoneBook.API v1"));
             }
+
+            app.UseRequestResponseLogging();
 
             app.UseRouting();
 
