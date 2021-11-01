@@ -22,16 +22,16 @@ namespace PhoneBook.API.Controllers
 
         //Requesting for a report
         [HttpGet]
-        public async Task<ActionResult> RequestReport()
+        public void RequestReport()
         {
-            return Ok();
+            _httpClientService.RequestReport();
         }
 
         // Request to get all reports with statuses
         [HttpGet("getAllReports")]
         public async Task<ActionResult> GetAllReports()
         {
-            return Ok();
+            return Ok(await _httpClientService.GetAllReports());
         }
 
         // Request to get a single report with UUID
@@ -44,7 +44,7 @@ namespace PhoneBook.API.Controllers
         [HttpGet("getReportDetails")]
         public async Task<ActionResult> GetReportDetails(int reportId)
         {
-            return Ok();
+            return Ok(await _httpClientService.GetReportDetails(reportId));
         }
     }
 }

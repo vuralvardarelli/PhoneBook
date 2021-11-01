@@ -81,19 +81,54 @@ namespace PhoneBook.Infrastructure.Services
             return result;
         }
 
-        public Task<GenericResult> GetReportDetails(int reportId)
+        public async Task<GenericResult> GetReportDetails(int reportId)
         {
-            throw new NotImplementedException();
+            GenericResult result = new GenericResult();
+
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, $"report/GetReportDetails?reportId={reportId}");
+
+            HttpResponseMessage response = await _reportClient.SendAsync(request);
+
+            if (response.IsSuccessStatusCode)
+            {
+                result.Data = JsonConvert.DeserializeObject<List<ReportDetail>>(await response.Content.ReadAsStringAsync());
+                result.IsSucceeded = true;
+            }
+            else
+            {
+                result.StatusCode = (int)response.StatusCode;
+            }
+
+            return result;
         }
 
-        public Task RequestReport()
+        public void RequestReport()
         {
-            throw new NotImplementedException();
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, $"report/RequestReport");
+
+            _ = _reportClient.SendAsync(request).Result;
         }
 
-        public Task<GenericResult> GetAllReports()
-        {
-            throw new NotImplementedException();
+        public async Task<GenericResult> GetAllReports()
+        {          
+
+            GenericResult result = new GenericResult();
+
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, $"report/ListReports");
+
+            HttpResponseMessage response = await _reportClient.SendAsync(request);
+
+            if (response.IsSuccessStatusCode)
+            {
+                result.Data = JsonConvert.DeserializeObject<List<Report>>(await response.Content.ReadAsStringAsync());
+                result.IsSucceeded = true;
+            }
+            else
+            {
+                result.StatusCode = (int)response.StatusCode;
+            }
+
+            return result;
         }
         #endregion
     }
