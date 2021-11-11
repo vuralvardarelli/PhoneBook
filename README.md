@@ -8,7 +8,7 @@
 ## Tech Stack
 * .NET 5
 * Microservices Architecture
-* Docker (TBD)
+* Docker
 * Redis
 * Elasticsearch & Serilog
 * RabbitMQ
